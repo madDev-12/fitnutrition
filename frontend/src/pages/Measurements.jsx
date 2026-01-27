@@ -1033,20 +1033,25 @@ const Measurements = () => {
                         justifyContent="flex-start"
                         leftIcon={<CalendarIcon />}
                         isReadOnly={!!editingId}
-                        bg={editingId ? 'gray.100' : 'white'}
-                        _hover={editingId ? { bg: 'gray.100' } : { bg: 'gray.50' }}
-                        _focus={editingId ? { bg: 'gray.100', boxShadow: 'none' } : { bg: 'white', boxShadow: '0 0 0 1px var(--chakra-colors-blue-500)' }}
-                        _active={editingId ? { bg: 'gray.100' } : { bg: 'gray.100' }}
+                        bg={useColorModeValue(
+                          editingId ? 'gray.100' : 'white',
+                          editingId ? 'gray.600' : 'gray.700'
+                        )}
+                        borderColor={useColorModeValue('gray.200', 'gray.600')}
+                        color={useColorModeValue(
+                          formData.date ? 'gray.800' : 'gray.500',
+                          formData.date ? 'white' : 'gray.400'
+                        )}
+                        _hover={editingId ? {} : {
+                          bg: useColorModeValue('gray.50', 'gray.600'),
+                          borderColor: useColorModeValue('gray.300', 'gray.500')
+                        }}
+                        _focus={editingId ? {} : {
+                          borderColor: useColorModeValue('blue.500', 'blue.300'),
+                          boxShadow: `0 0 0 1px ${useColorModeValue('#3182ce', '#63b3ed')}`
+                        }}
                         cursor={editingId ? 'not-allowed' : 'pointer'}
                         isDisabled={!!editingId}
-                        color={formData.date ? 'gray.800' : 'gray.500'}
-                        borderColor="gray.200"
-                        sx={{
-                          backgroundColor: editingId ? 'gray.100' : 'white',
-                          '&:not([disabled]):hover': {
-                            backgroundColor: editingId ? 'gray.100' : 'gray.50'
-                          }
-                        }}
                       >
                         {formData.date ? formatDate(formData.date) : '日付を選択'}
                       </Button>
