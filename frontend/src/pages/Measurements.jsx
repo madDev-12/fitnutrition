@@ -605,22 +605,29 @@ const Measurements = () => {
           ))}
         </Grid>
         
-        <Box mt={4} p={3} bg="gray.50" borderRadius="md">
-          <Text fontSize="xs" color="gray.600" mb={2}>
+        <Box mt={4} p={3} bg={useColorModeValue('gray.50', 'gray.600')} borderRadius="md">
+          <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.300')} mb={2}>
             <strong>凡例:</strong>
           </Text>
           <Flex gap={4} flexWrap="wrap">
             <Flex align="center" gap={1}>
-              <Box w={3} h={3} bg="green.100" border="2px solid" borderColor="green.300" borderRadius="sm" />
-              <Text fontSize="xs">データあり</Text>
+              <Box 
+                w={3} 
+                h={3} 
+                bg={useColorModeValue('green.100', 'green.200')} 
+                border="2px solid" 
+                borderColor={useColorModeValue('green.300', 'green.400')} 
+                borderRadius="sm" 
+              />
+              <Text fontSize="xs" color={useColorModeValue('gray.700', 'gray.200')}>データあり</Text>
             </Flex>
             <Flex align="center" gap={1}>
-              <Box w={3} h={3} bg="blue.50" borderRadius="sm" />
-              <Text fontSize="xs">今日</Text>
+              <Box w={3} h={3} bg={useColorModeValue('blue.50', 'blue.200')} borderRadius="sm" />
+              <Text fontSize="xs" color={useColorModeValue('gray.700', 'gray.200')}>今日</Text>
             </Flex>
             <Flex align="center" gap={1}>
-              <Box w={3} h={3} bg="blue.500" borderRadius="sm" />
-              <Text fontSize="xs">選択中</Text>
+              <Box w={3} h={3} bg={useColorModeValue('blue.500', 'blue.400')} borderRadius="sm" />
+              <Text fontSize="xs" color={useColorModeValue('gray.700', 'gray.200')}>選択中</Text>
             </Flex>
           </Flex>
         </Box>
