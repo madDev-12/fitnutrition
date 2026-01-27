@@ -3218,12 +3218,12 @@ const Workouts = () => {
                             borderWidth="1px"
                             borderRadius="md"
                             cursor="pointer"
-                            _hover={{ bg: 'gray.50' }}
+                            _hover={{ bg: useColorModeValue('gray.50', 'gray.600') }}
                             onClick={() => handleExerciseSelect(exercise)}
                           >
                             <Box flex="1">
                               <Text fontWeight="medium" fontSize="sm">{exercise.name}</Text>
-                              <Text fontSize="xs" color="gray.600">
+                              <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')}>
                                 {exercise.muscle_group} • {exercise.equipment}
                               </Text>
                             </Box>
@@ -4077,12 +4077,12 @@ const Workouts = () => {
                             borderWidth="1px"
                             borderRadius="md"
                             cursor="pointer"
-                            _hover={{ bg: 'gray.50' }}
+                            _hover={{ bg: useColorModeValue('gray.50', 'gray.600') }}
                             onClick={() => handleExerciseSelect(exercise)}
                           >
                             <Box flex="1">
                               <Text fontWeight="medium" fontSize="sm">{exercise.name}</Text>
-                              <Text fontSize="xs" color="gray.600">
+                              <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')}>
                                 {exercise.muscle_group} • {exercise.equipment}
                               </Text>
                             </Box>
@@ -4121,7 +4121,7 @@ const Workouts = () => {
                   「<strong>{workoutToDelete.name}</strong>」を削除してもよろしいですか？
                 </Text>
                 
-                <Box p={3} bg="gray.50" borderRadius="md" borderLeft="4px solid" borderColor={
+                <Box p={3} bg={useColorModeValue('gray.50', 'gray.700')} borderRadius="md" borderLeft="4px solid" borderColor={
                   deleteOption === 'today' ? 'blue.500' : 
                   deleteOption === 'recurring' ? 'orange.500' : 'red.500'
                 }>
@@ -4132,7 +4132,7 @@ const Workouts = () => {
                                  '今日以降すべて削除'}
                     </Text>
                     
-                    <Text fontSize="sm" color="gray.600">
+                    <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
                       {deleteOption === 'today' && `${formatDate(workoutToDelete.date)} のワークアウトのみ削除`}
                       
                       {deleteOption === 'recurring' && (() => {
@@ -4887,7 +4887,7 @@ const Workouts = () => {
                         <Box 
                           key={idx}
                           p={2} 
-                          bg="green.50" 
+                          bg={useColorModeValue('green.50', 'green.900')} 
                           borderRadius="md" 
                           borderLeft="3px solid"
                           borderColor="green.400"
@@ -4898,7 +4898,7 @@ const Workouts = () => {
                               {exercise.exercise?.name || exercise.name || 'エクササイズ'}
                             </Text>
                           </Flex>
-                          <Text fontSize="xs" color="gray.600" mt={1}>
+                          <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')} mt={1}>
                             {exercise.planned_sets || exercise.sets || 0}セット × {exercise.planned_reps || exercise.reps || 0}回
                           </Text>
                         </Box>
@@ -4908,8 +4908,8 @@ const Workouts = () => {
                     {/* Show unchecked exercises count */}
                     {workoutToComplete.exercises.filter((exercise, idx) => 
                       !getExerciseCheckStatus(exercise.id, idx)).length > 0 && (
-                      <Box p={2} bg="gray.50" borderRadius="md" borderLeft="3px solid" borderColor="gray.300">
-                        <Text fontSize="sm" color="gray.600">
+                      <Box p={2} bg={useColorModeValue('gray.50', 'gray.700')} borderRadius="md" borderLeft="3px solid" borderColor="gray.300">
+                        <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
                           未完了: {workoutToComplete.exercises.filter((exercise, idx) => 
                             !getExerciseCheckStatus(exercise.id, idx)).length}種目
                         </Text>
@@ -4919,7 +4919,7 @@ const Workouts = () => {
                 </Box>
               )}
               
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
                 完了後は編集や削除ができなくなります。
               </Text>
             </VStack>
