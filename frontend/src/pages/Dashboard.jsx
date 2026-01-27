@@ -1225,11 +1225,30 @@ const Dashboard = () => {
         const dashboardResponse = await analyticsService.getDashboard();
         const data = dashboardResponse.data || dashboardResponse;
         console.log('Dashboard API response:', data);
+        
+        // Ensure goal_progress has proper structure
+        if (data && (!data.goal_progress || data.goal_progress.weight_remaining === undefined)) {
+          console.warn('Dashboard data missing goal_progress or weight_remaining');
+          data.goal_progress = {
+            ...data.goal_progress,
+            weight_remaining: null,
+            target_weight: data.goal_progress?.target_weight || null
+          };
+        }
+        
         setDashboardData(data);
       } catch (error) {
         console.error('Error loading dashboard data:', error);
         dashboardError = 'ダッシュボードデータの読み込みに失敗しました';
-        setDashboardData(null);
+        // Set fallback data structure instead of null
+        setDashboardData({
+          goal_progress: {
+            weight_remaining: null,
+            target_weight: null
+          },
+          recent_progress: null,
+          metabolism: null
+        });
       }
       
       try {
@@ -1794,7 +1813,8 @@ const Dashboard = () => {
                 {dashboardData?.goal_progress?.target_weight || '未設定'} kg
               </Text>
               <Text fontSize="xs" color="gray.600" mb={1}>
-                {dashboardData?.goal_progress?.weight_remaining !== null
+                {dashboardData?.goal_progress?.weight_remaining !== null && 
+                 dashboardData?.goal_progress?.weight_remaining !== undefined
                   ? Math.abs(dashboardData.goal_progress.weight_remaining) <= 1
                     ? "目標体重を達成しました！"
                     : `残り ${Math.abs(dashboardData.goal_progress.weight_remaining).toFixed(1)} kg`
@@ -1802,6 +1822,7 @@ const Dashboard = () => {
               </Text>
               {/* Success badge when weight goal is achieved (within reasonable range) */}
               {dashboardData?.goal_progress?.weight_remaining !== null && 
+               dashboardData?.goal_progress?.weight_remaining !== undefined &&
                Math.abs(dashboardData.goal_progress.weight_remaining) <= 1 ? (
                 <Badge colorScheme="green" fontSize="xs" bg="green.500" color="white" mb={1}>
                   🎉 目標達成おめでとうございます！
