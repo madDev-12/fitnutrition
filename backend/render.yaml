@@ -1,0 +1,21 @@
+# Render.yaml - Configuration file for Render
+# This file is optional, Render can auto-detect Django apps
+services:
+  - type: web
+    name: fitnutrition-backend
+    env: python
+    region: singapore
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.5
+      - key: PIP_VERSION
+        value: 23.3.1
+databases:
+  - name: fitnutrition-db
+    databaseName: fitnutrition_db
+    user: fitnutrition_user
+    region: singapore
+    plan: free

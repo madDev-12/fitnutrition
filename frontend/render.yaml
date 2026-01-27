@@ -1,0 +1,11 @@
+# Render.yaml - Frontend configuration
+# This file is optional, Render can auto-detect React apps  
+services:
+  - type: web
+    name: fitnutrition-frontend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: "npm ci && npm run build"
+    startCommand: "npm start"
+    staticPublishPath: ./dist

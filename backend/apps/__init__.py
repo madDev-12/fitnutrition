@@ -1,0 +1,3 @@
+"""
+FitNutrition Django Apps Package
+"""
