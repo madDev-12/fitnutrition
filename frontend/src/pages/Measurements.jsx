@@ -1034,8 +1034,19 @@ const Measurements = () => {
                         leftIcon={<CalendarIcon />}
                         isReadOnly={!!editingId}
                         bg={editingId ? 'gray.100' : 'white'}
+                        _hover={editingId ? { bg: 'gray.100' } : { bg: 'gray.50' }}
+                        _focus={editingId ? { bg: 'gray.100', boxShadow: 'none' } : { bg: 'white', boxShadow: '0 0 0 1px var(--chakra-colors-blue-500)' }}
+                        _active={editingId ? { bg: 'gray.100' } : { bg: 'gray.100' }}
                         cursor={editingId ? 'not-allowed' : 'pointer'}
                         isDisabled={!!editingId}
+                        color={formData.date ? 'gray.800' : 'gray.500'}
+                        borderColor="gray.200"
+                        sx={{
+                          backgroundColor: editingId ? 'gray.100' : 'white',
+                          '&:not([disabled]):hover': {
+                            backgroundColor: editingId ? 'gray.100' : 'gray.50'
+                          }
+                        }}
                       >
                         {formData.date ? formatDate(formData.date) : '日付を選択'}
                       </Button>
