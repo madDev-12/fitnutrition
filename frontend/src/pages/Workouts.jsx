@@ -3148,7 +3148,14 @@ const Workouts = () => {
                         {selectedExercises.length > 0 ? (
                           <VStack spacing={2} align="stretch">
                             {selectedExercises.map((exercise, index) => (
-                              <VStack key={index} p={3} bg="gray.50" borderRadius="md" align="stretch" spacing={2}>
+                              <VStack 
+                                key={index} 
+                                p={3} 
+                                bg={useColorModeValue('gray.50', 'gray.600')} 
+                                borderRadius="md" 
+                                align="stretch" 
+                                spacing={2}
+                              >
                                 <HStack justify="space-between">
                                   <Text fontWeight="medium" fontSize="sm">{exercise.name}</Text>
                                   <Button size="sm" colorScheme="red" variant="ghost" onClick={() => handleExerciseRemove(index)}>
@@ -3157,7 +3164,7 @@ const Workouts = () => {
                                 </HStack>
                                 <HStack spacing={2}>
                                   <VStack align="stretch" flex="1" spacing={1}>
-                                    <Text fontSize="xs" color="gray.600" fontWeight="medium">セット数</Text>
+                                    <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.300')} fontWeight="medium">セット数</Text>
                                     <Input
                                       type="number"
                                       size="sm"
@@ -3167,7 +3174,7 @@ const Workouts = () => {
                                     />
                                   </VStack>
                                   <VStack align="stretch" flex="1" spacing={1}>
-                                    <Text fontSize="xs" color="gray.600" fontWeight="medium">回数</Text>
+                                    <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.300')} fontWeight="medium">回数</Text>
                                     <Input
                                       type="number"
                                       size="sm"
@@ -3177,7 +3184,7 @@ const Workouts = () => {
                                     />
                                   </VStack>
                                   <VStack align="stretch" flex="1" spacing={1}>
-                                    <Text fontSize="xs" color="gray.600" fontWeight="medium">重量 (kg)</Text>
+                                    <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.300')} fontWeight="medium">重量 (kg)</Text>
                                     <Input
                                       type="number"
                                       step="0.5"
@@ -4000,7 +4007,14 @@ const Workouts = () => {
                         {selectedExercises.length > 0 ? (
                           <VStack spacing={2} align="stretch">
                             {selectedExercises.map((exercise, index) => (
-                              <VStack key={index} p={3} bg="gray.50" borderRadius="md" align="stretch" spacing={2}>
+                              <VStack 
+                                key={index} 
+                                p={3} 
+                                bg={useColorModeValue('gray.50', 'gray.600')} 
+                                borderRadius="md" 
+                                align="stretch" 
+                                spacing={2}
+                              >
                                 <HStack justify="space-between">
                                   <Text fontWeight="medium" fontSize="sm">{exercise.name}</Text>
                                   <Button size="sm" colorScheme="red" variant="ghost" onClick={() => handleExerciseRemove(index)}>
@@ -4009,7 +4023,7 @@ const Workouts = () => {
                                 </HStack>
                                 <HStack spacing={2}>
                                   <VStack align="stretch" flex="1" spacing={1}>
-                                    <Text fontSize="xs" color="gray.600" fontWeight="medium">セット数</Text>
+                                    <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.300')} fontWeight="medium">セット数</Text>
                                     <Input
                                       type="number"
                                       size="sm"
@@ -4019,7 +4033,7 @@ const Workouts = () => {
                                     />
                                   </VStack>
                                   <VStack align="stretch" flex="1" spacing={1}>
-                                    <Text fontSize="xs" color="gray.600" fontWeight="medium">回数</Text>
+                                    <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.300')} fontWeight="medium">回数</Text>
                                     <Input
                                       type="number"
                                       size="sm"
@@ -4029,7 +4043,7 @@ const Workouts = () => {
                                     />
                                   </VStack>
                                   <VStack align="stretch" flex="1" spacing={1}>
-                                    <Text fontSize="xs" color="gray.600" fontWeight="medium">重量 (kg)</Text>
+                                    <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.300')} fontWeight="medium">重量 (kg)</Text>
                                     <Input
                                       type="number"
                                       step="0.5"
