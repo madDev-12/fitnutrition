@@ -844,6 +844,19 @@ const Measurements = () => {
                     labelFormatter={(label, payload) => 
                       payload && payload[0] ? payload[0].payload.fullDate : label
                     }
+                    contentStyle={{
+                      backgroundColor: useColorModeValue('#ffffff', '#2d3748'),
+                      border: `1px solid ${useColorModeValue('#e2e8f0', '#4a5568')}`,
+                      borderRadius: '8px',
+                      color: useColorModeValue('#1a202c', '#ffffff'),
+                      boxShadow: useColorModeValue(
+                        '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
+                      )
+                    }}
+                    labelStyle={{
+                      color: useColorModeValue('#4a5568', '#a0aec0')
+                    }}
                   />
                   <Legend />
                   <Line 
