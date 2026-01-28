@@ -36,8 +36,6 @@ import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Cart
 import { FiTrendingUp, FiTarget, FiCheckCircle, FiDownload } from 'react-icons/fi';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 import analyticsService from '../services/analytics';
 import measurementsService from '../services/measurements';
 import { formatDate } from '../utils/helpers';
@@ -315,41 +313,6 @@ const Progress = () => {
         const blob = new Blob([csvOutput], { type: 'text/csv;charset=utf-8;' });
         saveAs(blob, `${fileName}.csv`);
       }
-    } else if (format === 'pdf') {
-      const doc = new jsPDF();
-      doc.text('進捗レポート', 14, 16);
-      doc.setFontSize(10);
-      doc.text(`期間: ${startDate} から ${endDate}`, 14, 22);
-
-      // Progress Data Table
-      doc.autoTable({
-        startY: 30,
-        head: [['日時', '現体重', '体重変化', '体脂肪率', '体脂肪率変化', 'エクササイズタイプ', '摂取カロリー', '消費カロリー']],
-        body: dailyProgressData.map(item => [
-          item['日時'],
-          item['現体重'],
-          item['体重変化'],
-          item['体脂肪率'],
-          item['体脂肪率変化'],
-          item['エクササイズタイプ'],
-          item['摂取カロリー'],
-          item['消費カロリー']
-        ]),
-        theme: 'grid',
-        styles: { fontSize: 7 },
-        columnStyles: {
-          0: { cellWidth: 20 },
-          1: { cellWidth: 18 },
-          2: { cellWidth: 18 },
-          3: { cellWidth: 18 },
-          4: { cellWidth: 20 },
-          5: { cellWidth: 30 },
-          6: { cellWidth: 18 },
-          7: { cellWidth: 18 }
-        }
-      });
-
-      doc.save(`${fileName}.pdf`);
     }
   };
 
@@ -514,7 +477,6 @@ const Progress = () => {
               <MenuList>
                 <MenuItem onClick={() => exportData('csv')}>CSV</MenuItem>
                 <MenuItem onClick={() => exportData('xlsx')}>Excel</MenuItem>
-                <MenuItem onClick={() => exportData('pdf')}>PDF</MenuItem>
               </MenuList>
             </Menu>
           </HStack>
