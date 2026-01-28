@@ -179,7 +179,12 @@ class ExerciseViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def get_queryset(self):
-        queryset = Exercise.objects.all()
+        # Filter to show:
+        # 1. All system exercises (is_custom=False)
+        # 2. Only the current user's custom exercises (is_custom=True AND created_by=current_user)
+        queryset = Exercise.objects.filter(
+            Q(is_custom=False) | Q(is_custom=True, created_by=self.request.user)
+        )
         
         # Filter by exercise type
         exercise_type = self.request.query_params.get('type')
@@ -207,10 +212,14 @@ class ExerciseViewSet(viewsets.ModelViewSet):
         # Show only user's custom exercises or all public exercises
         show_custom_only = self.request.query_params.get('custom_only')
         if show_custom_only == 'true':
-            queryset = queryset.filter(created_by=self.request.user)
+            queryset = queryset.filter(created_by=self.request.user, is_custom=True)
         
         return queryset
 
+    def perform_create(self, serializer):
+        """Save the exercise with the current user as creator and mark as custom"""
+        serializer.save(created_by=self.request.user, is_custom=True)
+    
     def get_serializer_class(self):
         return ExerciseSerializer
 
@@ -289,7 +298,12 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
 
     def get_queryset(self):
-        queryset = WorkoutPlan.objects.all()
+        # Filter to show:
+        # 1. All system workout plans (is_custom=False)
+        # 2. Only the current user's custom workout plans (is_custom=True AND created_by=current_user)
+        queryset = WorkoutPlan.objects.filter(
+            Q(is_custom=False) | Q(is_custom=True, created_by=self.request.user)
+        )
         
         # Filter by goal
         goal = self.request.query_params.get('goal')
@@ -304,9 +318,13 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
         # Show only user's custom plans or all public plans
         show_custom_only = self.request.query_params.get('custom_only')
         if show_custom_only == 'true':
-            queryset = queryset.filter(created_by=self.request.user)
+            queryset = queryset.filter(created_by=self.request.user, is_custom=True)
         
         return queryset.prefetch_related('plan_days__exercises__exercise')
+    
+    def perform_create(self, serializer):
+        """Save the workout plan with the current user as creator and mark as custom"""
+        serializer.save(created_by=self.request.user, is_custom=True)
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
