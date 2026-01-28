@@ -372,6 +372,21 @@ const Settings = () => {
                         メールアドレスは変更できません
                       </Text>
                     </FormControl>
+
+                    <FormControl>
+                      <FormLabel>生年月日</FormLabel>
+                      <Input
+                        type="date"
+                        value={user?.date_of_birth || ''}
+                        isReadOnly
+                        bg={useColorModeValue('gray.50', 'gray.700')}
+                        cursor="not-allowed"
+                        _focus={{ outline: 'none', boxShadow: 'none' }}
+                      />
+                      <Text fontSize="sm" color="gray.500" mt={1}>
+                        生年月日は変更できません
+                      </Text>
+                    </FormControl>
                   </VStack>
                 </CardBody>
               </Card>
