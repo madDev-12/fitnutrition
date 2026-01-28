@@ -43,8 +43,6 @@ const Profile = () => {
     first_name: '',
     last_name: '',
     email: '',
-    date_of_birth: '',
-    gender: '',
     height: '',
     target_weight: '',
     target_body_fat_percentage: '',
@@ -99,8 +97,6 @@ const Profile = () => {
         first_name: userData.first_name || '',
         last_name: userData.last_name || '',
         email: userData.email || '',
-        date_of_birth: userData.date_of_birth || '',
-        gender: userProfile.gender || '',
         height: userProfile.height || '',
         target_weight: userProfile.target_weight || '',
         target_body_fat_percentage: userProfile.target_body_fat_percentage || '',
@@ -388,27 +384,27 @@ const Profile = () => {
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel>生年月日</FormLabel>
+                      <FormLabel>年齢</FormLabel>
                       <Input
-                        type="date"
-                        name="date_of_birth"
-                        value={formData.date_of_birth}
-                        onChange={handleChange}
+                        value={profile?.age ? `${profile.age} 歳` : '未設定'}
+                        isReadOnly
+                        bg={useColorModeValue('gray.50', 'gray.700')}
+                        cursor="not-allowed"
+                        _focus={{ outline: 'none', boxShadow: 'none' }}
                       />
                     </FormControl>
 
                     <FormControl>
                       <FormLabel>性別</FormLabel>
-                      <Select
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
-                        placeholder="性別を選択"
-                      >
-                        <option value="male">男性</option>
-                        <option value="female">女性</option>
-                        <option value="other">その他</option>
-                      </Select>
+                      <Input
+                        value={profile?.profile?.gender === 'male' ? '男性' :
+                               profile?.profile?.gender === 'female' ? '女性' :
+                               profile?.profile?.gender === 'other' ? 'その他' : '未設定'}
+                        isReadOnly
+                        bg={useColorModeValue('gray.50', 'gray.700')}
+                        cursor="not-allowed"
+                        _focus={{ outline: 'none', boxShadow: 'none' }}
+                      />
                     </FormControl>
                   </Grid>
                 </Box>
