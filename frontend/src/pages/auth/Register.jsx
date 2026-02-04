@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Box,
   Button,
@@ -18,8 +18,11 @@ import {
   useColorModeValue,
   Select,
   Grid,
+  List,
+  ListItem,
+  ListIcon,
 } from '@chakra-ui/react';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiCheck, FiX } from 'react-icons/fi';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import authService from '../../services/auth';
 import { ACTIVITY_LEVELS, FITNESS_GOALS, GENDER_OPTIONS } from '../../utils/constants';
@@ -47,6 +50,49 @@ const Register = () => {
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+
+  // Password validation state
+  const passwordValidation = useMemo(() => {
+    const password = formData.password;
+    const email = formData.email;
+    const firstName = formData.first_name.toLowerCase();
+    const lastName = formData.last_name.toLowerCase();
+    
+    // Common passwords list (subset)
+    const commonPasswords = [
+      'password', 'password123', '12345678', 'qwerty', 'abc123',
+      'password1', '123456789', 'qwerty123', 'admin', 'admin123',
+      'letmein', 'welcome', 'monkey', '1234567890', 'password12'
+    ];
+
+    return {
+      minLength: password.length >= 8,
+      hasLetterAndNumber: /[a-zA-Z]/.test(password) && /[0-9]/.test(password),
+      notOnlyNumeric: !/^\d+$/.test(password),
+      notCommon: !commonPasswords.includes(password.toLowerCase()),
+      notSimilarToUser: (() => {
+        if (!password) return true;
+        const lowerPassword = password.toLowerCase();
+        const emailPrefix = email.split('@')[0].toLowerCase();
+        
+        // Check similarity with email, first name, last name
+        if (emailPrefix && lowerPassword.includes(emailPrefix)) return false;
+        if (firstName && firstName.length > 2 && lowerPassword.includes(firstName)) return false;
+        if (lastName && lastName.length > 2 && lowerPassword.includes(lastName)) return false;
+        
+        return true;
+      })(),
+      passwordsMatch: formData.password && formData.password2 && formData.password === formData.password2,
+    };
+  }, [formData.password, formData.password2, formData.email, formData.first_name, formData.last_name]);
+
+  const allPasswordRequirementsMet = useMemo(() => {
+    return passwordValidation.minLength &&
+           passwordValidation.hasLetterAndNumber &&
+           passwordValidation.notOnlyNumeric &&
+           passwordValidation.notCommon &&
+           passwordValidation.notSimilarToUser;
+  }, [passwordValidation]);
 
   const handleChange = (e) => {
     setFormData({
@@ -193,51 +239,96 @@ const Register = () => {
                 />
               </FormControl>
 
-              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4}>
-                <FormControl isRequired>
-                  <FormLabel>パスワード</FormLabel>
-                  <InputGroup>
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="最低8文字"
+              <FormControl isRequired>
+                <FormLabel>パスワード</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="最低8文字"
+                  />
+                  <InputRightElement>
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      icon={showPassword ? <FiEyeOff /> : <FiEye />}
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
                     />
-                    <InputRightElement>
-                      <IconButton
-                        variant="ghost"
-                        size="sm"
-                        icon={showPassword ? <FiEyeOff /> : <FiEye />}
-                        onClick={() => setShowPassword(!showPassword)}
-                        aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                      />
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
+                  </InputRightElement>
+                </InputGroup>
+                
+                {/* Password Requirements Indicator */}
+                {formData.password && (
+                  <Box mt={3} p={3} bg={useColorModeValue('gray.50', 'gray.700')} borderRadius="md">
+                    <Text fontSize="sm" fontWeight="semibold" mb={2} color={useColorModeValue('gray.700', 'gray.200')}>
+                      パスワード要件:
+                    </Text>
+                    <List spacing={1}>
+                      <ListItem fontSize="sm" color={passwordValidation.minLength ? 'green.500' : 'red.500'}>
+                        <ListIcon as={passwordValidation.minLength ? FiCheck : FiX} />
+                        最低8文字
+                      </ListItem>
+                      <ListItem fontSize="sm" color={passwordValidation.hasLetterAndNumber ? 'green.500' : 'red.500'}>
+                        <ListIcon as={passwordValidation.hasLetterAndNumber ? FiCheck : FiX} />
+                        文字と数字の組み合わせ
+                      </ListItem>
+                      <ListItem fontSize="sm" color={passwordValidation.notOnlyNumeric ? 'green.500' : 'red.500'}>
+                        <ListIcon as={passwordValidation.notOnlyNumeric ? FiCheck : FiX} />
+                        数字のみは不可
+                      </ListItem>
+                      <ListItem fontSize="sm" color={passwordValidation.notCommon ? 'green.500' : 'red.500'}>
+                        <ListIcon as={passwordValidation.notCommon ? FiCheck : FiX} />
+                        一般的なパスワードは不可
+                      </ListItem>
+                      <ListItem fontSize="sm" color={passwordValidation.notSimilarToUser ? 'green.500' : 'red.500'}>
+                        <ListIcon as={passwordValidation.notSimilarToUser ? FiCheck : FiX} />
+                        個人情報と類似していない
+                      </ListItem>
+                    </List>
+                  </Box>
+                )}
+              </FormControl>
 
-                <FormControl isRequired>
-                  <FormLabel>パスワード確認</FormLabel>
-                  <InputGroup>
-                    <Input
-                      type={showPassword2 ? 'text' : 'password'}
-                      name="password2"
-                      value={formData.password2}
-                      onChange={handleChange}
-                      placeholder="パスワードを再入力"
+              <FormControl isRequired>
+                <FormLabel>パスワード確認</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showPassword2 ? 'text' : 'password'}
+                    name="password2"
+                    value={formData.password2}
+                    onChange={handleChange}
+                    placeholder="パスワードを再入力"
+                  />
+                  <InputRightElement>
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      icon={showPassword2 ? <FiEyeOff /> : <FiEye />}
+                      onClick={() => setShowPassword2(!showPassword2)}
+                      aria-label={showPassword2 ? 'パスワードを隠す' : 'パスワードを表示'}
                     />
-                    <InputRightElement>
-                      <IconButton
-                        variant="ghost"
-                        size="sm"
-                        icon={showPassword2 ? <FiEyeOff /> : <FiEye />}
-                        onClick={() => setShowPassword2(!showPassword2)}
-                        aria-label={showPassword2 ? 'パスワードを隠す' : 'パスワードを表示'}
-                      />
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-              </Grid>
+                  </InputRightElement>
+                </InputGroup>
+                
+                {/* Password Match Indicator */}
+                {formData.password2 && (
+                  <Box mt={2}>
+                    <Text 
+                      fontSize="sm" 
+                      color={passwordValidation.passwordsMatch ? 'green.500' : 'red.500'}
+                      display="flex"
+                      alignItems="center"
+                      gap={1}
+                    >
+                      <Box as={passwordValidation.passwordsMatch ? FiCheck : FiX} />
+                      {passwordValidation.passwordsMatch ? 'パスワードが一致します' : 'パスワードが一致しません'}
+                    </Text>
+                  </Box>
+                )}
+              </FormControl>
 
               {/* Physical Information */}
               <Heading size="md" color="gray.700" mt={4}>身体情報</Heading>
