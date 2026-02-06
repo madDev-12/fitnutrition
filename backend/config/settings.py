@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'django_extensions',
+    'storages',
     
     # Local apps
     'apps.users',
@@ -140,6 +141,33 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Media files
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# AWS S3 Configuration for Media Storage
+# Set USE_S3=True to enable S3 storage
+USE_S3 = True  # Set to False to use local storage
+
+if USE_S3:
+    # AWS Credentials - GANTI DENGAN KREDENSIAL ANDA
+    AWS_ACCESS_KEY_ID = 'YOUR_AWS_ACCESS_KEY_ID'  # Ganti dengan Access Key ID Anda
+    AWS_SECRET_ACCESS_KEY = 'YOUR_AWS_SECRET_ACCESS_KEY'  # Ganti dengan Secret Access Key Anda
+    AWS_STORAGE_BUCKET_NAME = 'YOUR_BUCKET_NAME'  # Ganti dengan nama bucket Anda
+    AWS_S3_REGION_NAME = 'us-east-1'  # Region us-east-1
+    
+    # Optional: Session token for AWS Learner Lab (uncomment jika menggunakan Learner Lab)
+    # AWS_SESSION_TOKEN = 'YOUR_SESSION_TOKEN'
+    
+    # S3 Settings
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',  # 1 day cache
+    }
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_QUERYSTRING_AUTH = False  # Don't add auth params to URLs
+    
+    # Use S3 for media files
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
