@@ -144,17 +144,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # AWS S3 Configuration for Media Storage
 # Set USE_S3=True to enable S3 storage
-USE_S3 = True  # Set to False to use local storage
+USE_S3 = config('USE_S3', default=False, cast=bool)
 
 if USE_S3:
-    # AWS Credentials - GANTI DENGAN KREDENSIAL ANDA
-    AWS_ACCESS_KEY_ID = 'YOUR_AWS_ACCESS_KEY_ID'  # Ganti dengan Access Key ID Anda
-    AWS_SECRET_ACCESS_KEY = 'YOUR_AWS_SECRET_ACCESS_KEY'  # Ganti dengan Secret Access Key Anda
-    AWS_STORAGE_BUCKET_NAME = 'YOUR_BUCKET_NAME'  # Ganti dengan nama bucket Anda
-    AWS_S3_REGION_NAME = 'us-east-1'  # Region us-east-1
+    # AWS Credentials from environment variables
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='fitnutrition-media-teamg')
+    AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
     
-    # Optional: Session token for AWS Learner Lab (uncomment jika menggunakan Learner Lab)
-    # AWS_SESSION_TOKEN = 'YOUR_SESSION_TOKEN'
+    # Session token for AWS Learner Lab (required for temporary credentials)
+    AWS_SESSION_TOKEN = config('AWS_SESSION_TOKEN', default='')
     
     # S3 Settings
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
@@ -164,6 +164,9 @@ if USE_S3:
     AWS_DEFAULT_ACL = 'public-read'
     AWS_S3_FILE_OVERWRITE = False
     AWS_QUERYSTRING_AUTH = False  # Don't add auth params to URLs
+    
+    # S3 Signature Version (required for some regions)
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
     
     # Use S3 for media files
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
