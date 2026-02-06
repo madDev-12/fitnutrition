@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'django_extensions',
-    'storages',
+    'cloudinary_storage',
+    'cloudinary',
     
     # Local apps
     'apps.users',
@@ -138,39 +139,20 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # WhiteNoise configuration for static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Media files - Cloudinary Configuration
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
-# AWS S3 Configuration for Media Storage
-# Set USE_S3=True to enable S3 storage
-USE_S3 = config('USE_S3', default=False, cast=bool)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
 
-if USE_S3:
-    # AWS Credentials from environment variables
-    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
-    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
-    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='fitnutrition-media-teamg')
-    AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
-    
-    # Session token for AWS Learner Lab (required for temporary credentials)
-    AWS_SESSION_TOKEN = config('AWS_SESSION_TOKEN', default='')
-    
-    # S3 Settings
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',  # 1 day cache
-    }
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_QUERYSTRING_AUTH = False  # Don't add auth params to URLs
-    
-    # S3 Signature Version (required for some regions)
-    AWS_S3_SIGNATURE_VERSION = 's3v4'
-    
-    # Use S3 for media files
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+# Use Cloudinary for media files
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = '/media/'  # Cloudinary will override this
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
