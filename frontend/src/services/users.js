@@ -27,7 +27,7 @@ const usersService = {
 
   // Update user profile details
   updateProfileDetails: async (data) => {
-    const response = await api.put('/profile/details/', data);
+    const response = await api.patch('/profile/details/', data);
     return response.data;
   },
 

@@ -103,12 +103,41 @@ class UserProfileSerializer(serializers.ModelSerializer):
     tdee = serializers.ReadOnlyField()
     daily_calorie_target = serializers.ReadOnlyField()
     macro_targets = serializers.ReadOnlyField()
-    
-    # Make required fields optional for partial updates
+
+    # Make all fields optional for partial updates
     gender = serializers.CharField(required=False, allow_blank=True)
-    height = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True)
-    current_weight = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True)
-    
+    height = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True, min_value=50, max_value=300)
+    current_weight = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True, min_value=20, max_value=500)
+    target_weight = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True, min_value=20, max_value=500)
+    activity_level = serializers.ChoiceField(choices=UserProfile.ACTIVITY_LEVEL_CHOICES, required=False, allow_blank=True, allow_null=True)
+    fitness_goal = serializers.ChoiceField(choices=UserProfile.FITNESS_GOAL_CHOICES, required=False, allow_blank=True, allow_null=True)
+    body_fat_percentage = serializers.DecimalField(max_digits=4, decimal_places=1, required=False, allow_null=True, min_value=3, max_value=60)
+    target_body_fat_percentage = serializers.DecimalField(max_digits=4, decimal_places=1, required=False, allow_null=True, min_value=3, max_value=60)
+    chest = serializers.DecimalField(max_digits=5, decimal_places=1, required=False, allow_null=True)
+    waist = serializers.DecimalField(max_digits=5, decimal_places=1, required=False, allow_null=True)
+    hips = serializers.DecimalField(max_digits=5, decimal_places=1, required=False, allow_null=True)
+    arms = serializers.DecimalField(max_digits=5, decimal_places=1, required=False, allow_null=True)
+    thighs = serializers.DecimalField(max_digits=5, decimal_places=1, required=False, allow_null=True)
+    calves = serializers.DecimalField(max_digits=5, decimal_places=1, required=False, allow_null=True)
+
+    def to_internal_value(self, data):
+        """Handle empty strings and convert to appropriate values"""
+        internal_data = super().to_internal_value(data)
+
+        # Convert empty strings to None for decimal fields
+        decimal_fields = ['height', 'current_weight', 'target_weight', 'body_fat_percentage', 'target_body_fat_percentage', 'chest', 'waist', 'hips', 'arms', 'thighs', 'calves']
+        for field in decimal_fields:
+            if field in internal_data and internal_data[field] == '':
+                internal_data[field] = None
+
+        # Convert empty strings to None for choice fields
+        choice_fields = ['activity_level', 'fitness_goal', 'gender']
+        for field in choice_fields:
+            if field in internal_data and internal_data[field] == '':
+                internal_data[field] = None
+
+        return internal_data
+
     class Meta:
         model = UserProfile
         fields = [
