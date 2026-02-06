@@ -143,11 +143,9 @@ const Profile = () => {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
-        date_of_birth: formData.date_of_birth || null,
       };
 
       const profileData = {
-        gender: formData.gender || null,
         height: formData.height ? parseFloat(formData.height) : null,
         target_weight: formData.target_weight ? parseFloat(formData.target_weight) : null,
         target_body_fat_percentage: formData.target_body_fat_percentage ? parseFloat(formData.target_body_fat_percentage) : null,

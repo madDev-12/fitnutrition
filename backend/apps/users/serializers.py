@@ -105,7 +105,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     macro_targets = serializers.ReadOnlyField()
 
     # Make all fields optional for partial updates
-    gender = serializers.CharField(required=False, allow_blank=True)
+    gender = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     height = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True, min_value=50, max_value=300)
     current_weight = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True, min_value=20, max_value=500)
     target_weight = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True, min_value=20, max_value=500)
