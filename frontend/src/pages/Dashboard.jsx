@@ -1103,7 +1103,7 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
       >
         <Flex justify="space-between" align="center" wrap="wrap" gap={2}>
           <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.300')} fontWeight="medium">
-            7日間の{isIntake ? '摂取' : '消費'}カロリー
+            {isIntake ? '7日間の摂取' : '過去7日間の消費'}カロリー
           </Text>
           <Badge 
             colorScheme={isIntake ? 'green' : 'purple'} 
