@@ -761,8 +761,7 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
   // Helper function to format calories - convert to 千 format when >= 1000
   const formatCalories = (value) => {
     if (value >= 1000) {
-      // return (value / 1000).toFixed(1) + '千';
-      return (value / 1000).toFixed(1);
+      return (value / 1000).toFixed(1) + '千';
     }
     return Math.round(value).toString();
   };
