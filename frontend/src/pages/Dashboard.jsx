@@ -758,10 +758,10 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
   const dates = generateSevenDayRange();
   const isIntake = type === 'intake';
   
-  // Helper function to format calories - convert to k format when >= 1000
+  // Helper function to format calories - convert to 千 format when >= 1000
   const formatCalories = (value) => {
     if (value >= 1000) {
-      return (value / 1000).toFixed(1) + 'k';
+      return (value / 1000).toFixed(1) + '千';
     }
     return Math.round(value).toString();
   };
@@ -1216,10 +1216,10 @@ const Dashboard = () => {
   const greenIconBorderColor = useColorModeValue('green.200', 'green.600');
   const purpleIconBorderColor = useColorModeValue('purple.200', 'purple.600');
 
-  // Helper function to format calories - convert to k format when >= 1000
+  // Helper function to format calories - convert to 千 format when >= 1000
   const formatCalories = (value) => {
     if (value >= 1000) {
-      return (value / 1000).toFixed(1) + 'k';
+      return (value / 1000).toFixed(1) + '千';
     }
     return Math.round(value).toString();
   };
@@ -1514,7 +1514,7 @@ const Dashboard = () => {
               <Box flex="1">
                 <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')} mb={2}>今日のカロリー</Text>
                 <Text fontSize="2xl" fontWeight="bold" mb={1}>
-                  {formatCalories(todayCaloriesTotal)} kcal
+                  {todayCaloriesTotal.toLocaleString()} kcal
                 </Text>
                 <Text fontSize="xs" color="gray.500">
                   目標: {calorieTarget.toLocaleString()} kcal
