@@ -758,6 +758,14 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
   const dates = generateSevenDayRange();
   const isIntake = type === 'intake';
   
+  // Helper function to format calories - convert to k format when >= 1000
+  const formatCalories = (value) => {
+    if (value >= 1000) {
+      return (value / 1000).toFixed(1) + 'k';
+    }
+    return Math.round(value).toString();
+  };
+  
   useEffect(() => {
     loadWeekCalories();
   }, [type]);
@@ -1062,7 +1070,7 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
                 }
                 textAlign="center"
               >
-                {Math.round(calories).toLocaleString()}
+                {isIntake ? formatCalories(calories) : Math.round(calories).toLocaleString()}
               </Text>
               
               <Text fontSize="2xs" color="gray.500" textAlign="center">
