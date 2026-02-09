@@ -1561,11 +1561,13 @@ const Workouts = () => {
   const completedThisWeek = thisWeekWorkouts.filter(w => w.completed).length;
   const totalThisWeek = thisWeekWorkouts.length;
 
-  const totalDuration = thisWeekWorkouts.reduce((total, workout) => total + (workout.duration_minutes || workout.duration || 0), 0);
-  const totalCalories = thisWeekWorkouts.reduce((total, workout) => {
-    const calories = Number(workout.total_calories_burned || workout.calories_burned || 0);
-    return total + (isNaN(calories) ? 0 : calories);
-  }, 0);
+  const totalDuration = thisWeekWorkouts.filter(w => w.completed).reduce((total, workout) => total + (workout.duration_minutes || workout.duration || 0), 0);
+  const totalCalories = thisWeekWorkouts
+    .filter(w => w.completed)
+    .reduce((total, workout) => {
+      const calories = Number(workout.total_calories_burned || workout.calories_burned || 0);
+      return total + (isNaN(calories) ? 0 : calories);
+    }, 0);
 
   const weekDays = getWeekDays(currentWeekStart);
   const dayNames = ['月', '火', '水', '木', '金', '土', '日'];
