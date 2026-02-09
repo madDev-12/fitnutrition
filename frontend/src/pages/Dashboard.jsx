@@ -113,14 +113,27 @@ const NutritionModal = ({ isOpen, onClose, selectedDate, mealData, planData, for
       planNutrition.protein === 0 && 
       planNutrition.carbs === 0 && 
       planNutrition.fat === 0) {
-    // Use general macro distribution: 25% protein, 45% carbs, 30% fat
-    const proteinCalories = planNutrition.calories * 0.25;
-    const carbsCalories = planNutrition.calories * 0.45;
-    const fatCalories = planNutrition.calories * 0.30;
     
-    planNutrition.protein = proteinCalories / 4; // 4 kcal per gram of protein
-    planNutrition.carbs = carbsCalories / 4;     // 4 kcal per gram of carbs
-    planNutrition.fat = fatCalories / 9;         // 9 kcal per gram of fat
+    // Check if percentage data is available first (same logic as Nutrition page)
+    if (planData?.protein_percentage && planData?.carbs_percentage && planData?.fats_percentage) {
+      // Calculate from percentages
+      const proteinCalories = planNutrition.calories * (planData.protein_percentage / 100);
+      const carbsCalories = planNutrition.calories * (planData.carbs_percentage / 100);
+      const fatCalories = planNutrition.calories * (planData.fats_percentage / 100);
+      
+      planNutrition.protein = proteinCalories / 4; // 4 kcal per gram of protein
+      planNutrition.carbs = carbsCalories / 4;     // 4 kcal per gram of carbs
+      planNutrition.fat = fatCalories / 9;         // 9 kcal per gram of fat
+    } else {
+      // Use general macro distribution as fallback: 25% protein, 45% carbs, 30% fat
+      const proteinCalories = planNutrition.calories * 0.25;
+      const carbsCalories = planNutrition.calories * 0.45;
+      const fatCalories = planNutrition.calories * 0.30;
+      
+      planNutrition.protein = proteinCalories / 4; // 4 kcal per gram of protein
+      planNutrition.carbs = carbsCalories / 4;     // 4 kcal per gram of carbs
+      planNutrition.fat = fatCalories / 9;         // 9 kcal per gram of fat
+    }
   }
   
   console.log('Calculated plan nutrition:', planNutrition);
