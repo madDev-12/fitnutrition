@@ -816,12 +816,12 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
           console.log('Loaded workouts for dashboard:', workouts);
           setAllWorkouts(workouts);
           
-          // Calculate calories for each date from all workouts data
+          // Calculate calories for each date from all workouts data (only completed workouts)
           const data = {};
           dates.forEach(date => {
             const dateString = date.toISOString().split('T')[0];
-            const dayWorkouts = workouts.filter(w => w.date && w.date.startsWith(dateString));
-            console.log(`Workouts for ${dateString}:`, dayWorkouts);
+            const dayWorkouts = workouts.filter(w => w.date && w.date.startsWith(dateString) && w.completed);
+            console.log(`Completed workouts for ${dateString}:`, dayWorkouts);
             
             const totalCalories = dayWorkouts.reduce((total, workout) => {
               const calories = Number(workout.total_calories_burned) || 0;
@@ -847,8 +847,8 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
             const data = {};
             dates.forEach(date => {
               const dateString = date.toISOString().split('T')[0];
-              const dayWorkouts = workouts.filter(w => w.date && w.date.startsWith(dateString));
-              console.log(`Fallback workouts for ${dateString}:`, dayWorkouts);
+              const dayWorkouts = workouts.filter(w => w.date && w.date.startsWith(dateString) && w.completed);
+              console.log(`Fallback completed workouts for ${dateString}:`, dayWorkouts);
               
               const totalCalories = dayWorkouts.reduce((total, workout) => {
                 const calories = Number(workout.total_calories_burned) || 0;
