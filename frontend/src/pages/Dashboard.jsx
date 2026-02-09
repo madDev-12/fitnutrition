@@ -218,10 +218,10 @@ const NutritionModal = ({ isOpen, onClose, selectedDate, mealData, planData, for
                 <Icon as={FiPieChart} color="green.600" boxSize={6} />
               </Box>
               <VStack align="start" spacing={0}>
-                <Text fontSize="xl" fontWeight="bold" color="gray.800">
+                <Text fontSize="xl" fontWeight="bold" color={useColorModeValue('gray.800', 'white')}>
                   栄養分析レポート
                 </Text>
-                <Text fontSize="sm" color="gray.600">
+                <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.300')}>
                   {formatDayDisplay(selectedDate)} の詳細比較
                 </Text>
               </VStack>
@@ -238,7 +238,7 @@ const NutritionModal = ({ isOpen, onClose, selectedDate, mealData, planData, for
                 {/* Chart Section */}
                 <Box p={6} bg={useColorModeValue('gray.50', 'gray.900')}>
                   <VStack spacing={4} h="full">
-                    <Text fontSize="lg" fontWeight="semibold" color="gray.700">
+                    <Text fontSize="lg" fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
                       📊 栄養バランス比較
                     </Text>
                     <Box flex="1" w="full" maxH="280px" position="relative">
@@ -259,7 +259,7 @@ const NutritionModal = ({ isOpen, onClose, selectedDate, mealData, planData, for
                 {/* Progress Section */}
                 <Box p={6} bg={useColorModeValue('gray.50', 'gray.900')}>
                   <VStack spacing={6} h="full">
-                    <Text fontSize="lg" fontWeight="semibold" color="gray.700">
+                    <Text fontSize="lg" fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
                       🎯 目標達成度
                     </Text>
                     
@@ -405,10 +405,10 @@ const WorkoutModal = ({ isOpen, onClose, selectedDate, workoutData, formatDayDis
                 <Icon as={FiActivity} color="purple.600" boxSize={6} />
               </Box>
               <VStack align="start" spacing={0}>
-                <Text fontSize="xl" fontWeight="bold" color="gray.800">
+                <Text fontSize="xl" fontWeight="bold" color={useColorModeValue('gray.800', 'white')}>
                   ワークアウト分析レポート
                 </Text>
-                <Text fontSize="sm" color="gray.600">
+                <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.300')}>
                   {formatDayDisplay(selectedDate)} の詳細情報
                 </Text>
               </VStack>
@@ -428,7 +428,7 @@ const WorkoutModal = ({ isOpen, onClose, selectedDate, workoutData, formatDayDis
                     <Text fontSize="2xl" fontWeight="bold" color="purple.600">
                       {Math.round(totalCalories).toLocaleString()}
                     </Text>
-                    <Text fontSize="sm" color="gray.600">消費カロリー (kcal)</Text>
+                    <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.300')}>消費カロリー (kcal)</Text>
                   </VStack>
                 </Box>
                 
@@ -438,7 +438,7 @@ const WorkoutModal = ({ isOpen, onClose, selectedDate, workoutData, formatDayDis
                     <Text fontSize="2xl" fontWeight="bold" color="blue.600">
                       {totalDuration}
                     </Text>
-                    <Text fontSize="sm" color="gray.600">総運動時間 (分)</Text>
+                    <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.300')}>総運動時間 (分)</Text>
                   </VStack>
                 </Box>
                 
@@ -448,14 +448,14 @@ const WorkoutModal = ({ isOpen, onClose, selectedDate, workoutData, formatDayDis
                     <Text fontSize="2xl" fontWeight="bold" color="green.600">
                       {completedWorkouts}
                     </Text>
-                    <Text fontSize="sm" color="gray.600">完了ワークアウト</Text>
+                    <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.300')}>完了ワークアウト</Text>
                   </VStack>
                 </Box>
               </SimpleGrid>
               
               {/* Workout List */}
               <Box>
-                <Text fontSize="lg" fontWeight="bold" mb={4} color="gray.700">
+                <Text fontSize="lg" fontWeight="bold" mb={4} color={useColorModeValue('gray.700', 'gray.200')}>
                   📋 ワークアウト詳細
                 </Text>
                 <VStack spacing={3}>
@@ -553,7 +553,7 @@ const WorkoutModal = ({ isOpen, onClose, selectedDate, workoutData, formatDayDis
                         
                         return (
                           <Box mt={4} pt={4} borderTopWidth="1px" borderColor={borderColor}>
-                            <Text fontSize="sm" fontWeight="bold" mb={3} color="gray.700">
+                            <Text fontSize="sm" fontWeight="bold" mb={3} color={useColorModeValue('gray.700', 'gray.200')}>
                               エクササイズ詳細 ({exercises.length} 種目)
                             </Text>
                             
@@ -665,7 +665,7 @@ const WorkoutModal = ({ isOpen, onClose, selectedDate, workoutData, formatDayDis
                                             <Text 
                                               fontSize="sm" 
                                               fontWeight="medium" 
-                                              color="gray.600"
+                                              color={useColorModeValue('gray.600', 'gray.300')}
                                             >
                                               {exercise.exercise_name || exercise.name || `エクササイズ ${exerciseIndex + 1}`}
                                             </Text>
@@ -700,7 +700,7 @@ const WorkoutModal = ({ isOpen, onClose, selectedDate, workoutData, formatDayDis
                             {/* Progress Summary */}
                             <Box mt={4} pt={3} borderTopWidth="1px" borderColor={borderColor}>
                               <Flex justify="space-between" fontSize="sm">
-                                <Text color="gray.600">
+                                <Text color={useColorModeValue('gray.600', 'gray.300')}>
                                   <strong>進捗:</strong> {checkedExercises.length} / {exercises.length} 完了
                                 </Text>
                                 <Badge 
@@ -1102,7 +1102,7 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
         borderColor={borderColor}
       >
         <Flex justify="space-between" align="center" wrap="wrap" gap={2}>
-          <Text fontSize="xs" color="gray.600" fontWeight="medium">
+          <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.300')} fontWeight="medium">
             7日間の{isIntake ? '摂取' : '消費'}カロリー
           </Text>
           <Badge 
@@ -1411,7 +1411,7 @@ const Dashboard = () => {
       {/* Header */}
       <Box mb={{ base: 4, md: 6, lg: 8 }}>
         <Heading size={{ base: "sm", md: "md" }} mb={2}>ダッシュボード</Heading>
-        <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">こんにちは、あなたの健康状態の概要です。</Text>
+        <Text fontSize={{ base: "xs", md: "sm" }} color={useColorModeValue('gray.600', 'gray.400')}>こんにちは、あなたの健康状態の概要です。</Text>
       </Box>
 
       {/* Single Error Alert */}
@@ -1445,7 +1445,7 @@ const Dashboard = () => {
           <CardBody>
             <Flex justify="space-between" align="flex-start">
               <Box flex="1">
-                <Text fontSize={{ base: "2xs", md: "xs" }} color="gray.600" mb={2}>現在の体重</Text>
+                <Text fontSize={{ base: "2xs", md: "xs" }} color={useColorModeValue('gray.600', 'gray.400')} mb={2}>現在の体重</Text>
                 <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold" mb={1}>
                   {latestMeasurement?.weight || dashboardData?.goal_progress?.current_weight || 'N/A'} kg
                 </Text>
@@ -1496,7 +1496,7 @@ const Dashboard = () => {
           <CardBody>
             <Flex justify="space-between" align="flex-start">
               <Box flex="1">
-                <Text fontSize="xs" color="gray.600" mb={2}>今日のカロリー</Text>
+                <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')} mb={2}>今日のカロリー</Text>
                 <Text fontSize="2xl" fontWeight="bold" mb={1}>
                   {todayCaloriesTotal.toLocaleString()}
                 </Text>
@@ -1528,7 +1528,7 @@ const Dashboard = () => {
           <CardBody>
             <Flex justify="space-between" align="flex-start">
               <Box flex="1">
-                <Text fontSize="xs" color="gray.600" mb={2}>今週のワークアウト</Text>
+                <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')} mb={2}>今週のワークアウト</Text>
                 <Text fontSize="2xl" fontWeight="bold" mb={1}>
                   {workoutStats.completed}/{workoutStats.total}
                 </Text>
@@ -1561,7 +1561,7 @@ const Dashboard = () => {
           <CardBody>
             <Flex justify="space-between" align="flex-start">
               <Box flex="1">
-                <Text fontSize="xs" color="gray.600" mb={2}>体脂肪率</Text>
+                <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')} mb={2}>体脂肪率</Text>
                 <Text fontSize="2xl" fontWeight="bold" mb={1}>
                   {latestMeasurement?.body_fat_percentage ? `${latestMeasurement.body_fat_percentage}%` : 'N/A'}
                 </Text>
@@ -1647,7 +1647,7 @@ const Dashboard = () => {
                       {dashboardData.recent_progress.weight_progress?.weight_change?.toFixed(1) || 0} kg
                     </Badge>
                   </HStack>
-                  <Text fontSize="sm" color="gray.600">
+                  <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
                     過去7日間: {dashboardData.recent_progress.weight_progress?.start_weight?.toFixed(1)} kg → {dashboardData.recent_progress.weight_progress?.current_weight?.toFixed(1)} kg
                   </Text>
                 </VStack>
@@ -1691,7 +1691,7 @@ const Dashboard = () => {
                       )}
                     </Badge>
                   </HStack>
-                  <Text fontSize="sm" color="gray.600">
+                  <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
                     過去7日間: {dashboardData.recent_progress.start_body_fat?.toFixed(1)}% → {dashboardData.recent_progress.current_body_fat?.toFixed(1)}%
                   </Text>
                 </VStack>
@@ -1719,7 +1719,7 @@ const Dashboard = () => {
                       {dashboardData.recent_progress.workout_trends?.total_workouts || 0} 回
                     </Badge>
                   </HStack>
-                  <Text fontSize="sm" color="gray.600">
+                  <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
                     過去7日間 • {dashboardData.recent_progress.workout_trends?.total_duration_minutes || 0} 分
                   </Text>
                 </VStack>
@@ -1825,7 +1825,7 @@ const Dashboard = () => {
               <Text fontSize="xl" fontWeight="bold" color="brand.500">
                 {dashboardData?.goal_progress?.target_weight || '未設定'} kg
               </Text>
-              <Text fontSize="xs" color="gray.600" mb={1}>
+              <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')} mb={1}>
                 {dashboardData?.goal_progress?.weight_remaining !== null && 
                  dashboardData?.goal_progress?.weight_remaining !== undefined
                   ? Math.abs(dashboardData.goal_progress.weight_remaining) <= 1
@@ -1855,7 +1855,7 @@ const Dashboard = () => {
               <Text fontSize="xl" fontWeight="bold" color="green.500">
                 {dashboardData?.metabolism?.bmr ? Math.round(dashboardData.metabolism.bmr) : 'N/A'} kcal
               </Text>
-              <Text fontSize="xs" color="gray.600">
+              <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')}>
                 安静時の消費カロリー
               </Text>
             </Box>
@@ -1864,7 +1864,7 @@ const Dashboard = () => {
               <Text fontSize="xl" fontWeight="bold" color="purple.500">
                 {dashboardData?.metabolism?.tdee ? Math.round(dashboardData.metabolism.tdee) : 'N/A'} kcal
               </Text>
-              <Text fontSize="xs" color="gray.600">
+              <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')}>
                 1日の総消費カロリー
               </Text>
             </Box>
