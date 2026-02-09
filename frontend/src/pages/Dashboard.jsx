@@ -1772,7 +1772,7 @@ const Dashboard = () => {
               </Box>
               <VStack align="start" spacing={1}>
                 <Heading size="lg" color="green.600">摂取カロリー</Heading>
-                <Text fontSize="sm" color="gray.500">過去7日間の摂取カロリー推移</Text>
+                <Text fontSize="sm" color="gray.500">7日間の摂取カロリー推移</Text>
               </VStack>
             </HStack>
           </CardHeader>
