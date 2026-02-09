@@ -1070,7 +1070,7 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
                 }
                 textAlign="center"
               >
-                {isIntake ? formatCalories(calories) : Math.round(calories).toLocaleString()}
+                {formatCalories(calories)}
               </Text>
               
               <Text fontSize="2xs" color="gray.500" textAlign="center">
