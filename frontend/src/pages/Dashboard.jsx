@@ -1228,6 +1228,31 @@ const Dashboard = () => {
     loadDashboardData();
   }, []);
 
+  // Reload dashboard data when window/tab becomes visible again
+  // This ensures data is refreshed when user navigates back from profile page
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadDashboardData();
+      }
+    };
+
+    const handleFocus = () => {
+      loadDashboardData();
+    };
+
+    // Listen for visibility changes (tab switching)
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Listen for window focus (navigating back to this page)
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
+
   // Listen for changes to selected meal plan
   useEffect(() => {
     const handleStorageChange = (e) => {
