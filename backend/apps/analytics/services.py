@@ -974,15 +974,40 @@ class GoalTracker:
             # Get starting and current weight
             measurements = BodyMeasurement.objects.filter(user=user).order_by('date')
             
-            if measurements.count() < 2:
+            if measurements.count() < 1:
                 return None
             
+            target_weight = float(profile.target_weight)
+            
+            # If only one measurement, use it as both start and current
+            if measurements.count() == 1:
+                measurement = measurements.first()
+                current_weight = float(measurement.weight)
+                start_weight = current_weight
+                
+                # Calculate remaining weight
+                remaining = target_weight - current_weight
+                
+                # Estimate time to goal (assuming 0.5kg per week is healthy)
+                weeks_to_goal = abs(remaining / 0.5) if remaining != 0 else 0
+                
+                return {
+                    'start_weight': start_weight,
+                    'current_weight': current_weight,
+                    'target_weight': target_weight,
+                    'weight_lost': 0,
+                    'weight_remaining': round(remaining, 2),
+                    'progress_percentage': 0,
+                    'estimated_weeks_to_goal': round(weeks_to_goal, 1),
+                    'on_track': None  # Can't determine with only one measurement
+                }
+            
+            # If multiple measurements, calculate progress
             start_measurement = measurements.first()
             current_measurement = measurements.last()
             
             start_weight = float(start_measurement.weight)
             current_weight = float(current_measurement.weight)
-            target_weight = float(profile.target_weight)
             
             # Calculate progress
             total_to_lose = start_weight - target_weight
@@ -998,6 +1023,15 @@ class GoalTracker:
             # Estimate time to goal (assuming 0.5kg per week is healthy)
             weeks_to_goal = abs(remaining / 0.5) if remaining != 0 else 0
             
+            # Calculate if on track (only if we have time difference)
+            days_diff = (current_measurement.date - start_measurement.date).days
+            on_track = None
+            if days_diff > 0:
+                weeks_diff = days_diff / 7
+                avg_loss_per_week = lost_so_far / weeks_diff if weeks_diff > 0 else 0
+                # Healthy weight loss is 0.3-0.5 kg per week
+                on_track = -0.5 <= avg_loss_per_week <= -0.3
+            
             return {
                 'start_weight': start_weight,
                 'current_weight': current_weight,
@@ -1006,7 +1040,7 @@ class GoalTracker:
                 'weight_remaining': round(remaining, 2),
                 'progress_percentage': round(progress_percentage, 1),
                 'estimated_weeks_to_goal': round(weeks_to_goal, 1),
-                'on_track': -0.5 <= (lost_so_far / ((current_measurement.date - start_measurement.date).days / 7)) <= -0.3
+                'on_track': on_track
             }
         
         except Exception as e:
