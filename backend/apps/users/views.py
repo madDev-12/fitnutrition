@@ -232,10 +232,10 @@ class UserPreferencesView(generics.RetrieveUpdateAPIView):
         return preferences
 
 
-class ChangePasswordView(generics.UpdateAPIView):
+class ChangePasswordView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
-    def update(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         user = request.user
         old_password = request.data.get('old_password')
         new_password = request.data.get('new_password')
