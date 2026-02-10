@@ -43,6 +43,7 @@ const Profile = () => {
     first_name: '',
     last_name: '',
     email: '',
+    gender: '',
     height: '',
     target_weight: '',
     target_body_fat_percentage: '',
@@ -97,6 +98,7 @@ const Profile = () => {
         first_name: userData.first_name || '',
         last_name: userData.last_name || '',
         email: userData.email || '',
+        gender: userProfile.gender || '',
         height: userProfile.height || '',
         target_weight: userProfile.target_weight || '',
         target_body_fat_percentage: userProfile.target_body_fat_percentage || '',
@@ -146,6 +148,7 @@ const Profile = () => {
       };
 
       const profileData = {
+        gender: formData.gender || null,
         height: formData.height ? parseFloat(formData.height) : null,
         target_weight: formData.target_weight ? parseFloat(formData.target_weight) : null,
         target_body_fat_percentage: formData.target_body_fat_percentage ? parseFloat(formData.target_body_fat_percentage) : null,
@@ -394,15 +397,24 @@ const Profile = () => {
 
                     <FormControl>
                       <FormLabel>性別</FormLabel>
-                      <Input
-                        value={profile?.profile?.gender === 'male' ? '男性' :
-                               profile?.profile?.gender === 'female' ? '女性' :
-                               profile?.profile?.gender === 'other' ? 'その他' : '未設定'}
-                        isReadOnly
-                        bg={useColorModeValue('gray.50', 'gray.700')}
-                        cursor="not-allowed"
-                        _focus={{ outline: 'none', boxShadow: 'none' }}
-                      />
+                      <Select
+                        name="gender"
+                        value={profile?.profile?.gender || ''}
+                        onChange={(e) => {
+                          setFormData({
+                            ...formData,
+                            gender: e.target.value
+                          });
+                        }}
+                        placeholder="性別を選択"
+                      >
+                        <option value="male">男性</option>
+                        <option value="female">女性</option>
+                        <option value="other">その他</option>
+                      </Select>
+                      <Text fontSize="sm" color="orange.500" mt={1}>
+                        ⚠️ 一時的に編集可能です（メンテナンス用）
+                      </Text>
                     </FormControl>
                   </Grid>
                 </Box>
