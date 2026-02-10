@@ -319,23 +319,22 @@ def upload_profile_picture(request):
     user = request.user
     
     try:
-        profile = UserProfile.objects.get(user=user)
-        
         if 'profile_picture' in request.FILES:
-            profile.profile_picture = request.FILES['profile_picture']
-            profile.save()
+            # Save to User model, not UserProfile
+            user.profile_picture = request.FILES['profile_picture']
+            user.save()
             
             return Response({
                 'message': 'Profile picture uploaded successfully',
-                'profile_picture_url': profile.profile_picture.url if profile.profile_picture else None
+                'profile_picture_url': user.profile_picture.url if user.profile_picture else None
             })
         else:
             return Response(
                 {'error': 'No file provided'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-    except UserProfile.DoesNotExist:
+    except Exception as e:
         return Response(
-            {'error': 'Profile not found'},
-            status=status.HTTP_404_NOT_FOUND
+            {'error': f'Failed to upload profile picture: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
