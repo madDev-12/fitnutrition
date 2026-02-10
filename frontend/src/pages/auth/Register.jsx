@@ -130,6 +130,9 @@ const Register = () => {
       if (payload.weight === '') delete payload.weight;
       else if (payload.weight != null) payload.weight = Number(payload.weight);
 
+      // Log payload for debugging
+      console.log('Sending registration payload:', payload);
+
       const response = await authService.register(payload);
       
       toast({
@@ -196,7 +199,6 @@ const Register = () => {
         
         // Log full error for debugging
         console.error('Registration error:', data);
-        console.error('Payload sent:', payload);
       }
       
       toast({
