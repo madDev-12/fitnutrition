@@ -42,7 +42,7 @@ import {
   StatNumber as ChakraStatNumber,
 } from '@chakra-ui/react';
 import { FiActivity, FiTrendingDown, FiTrendingUp, FiTarget, FiCalendar, FiZap, FiPercent, FiMinus, FiPieChart } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import analyticsService from '../services/analytics';
 import measurementsService from '../services/measurements';
 import nutritionService from '../services/nutrition';
@@ -1193,6 +1193,7 @@ const CalorieCalendar = ({ type, selectedPlan, dashboardData }) => {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useToast();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
@@ -1252,6 +1253,11 @@ const Dashboard = () => {
       window.removeEventListener('focus', handleFocus);
     };
   }, []);
+
+  // Reload dashboard data when location changes (e.g., navigating back from profile)
+  useEffect(() => {
+    loadDashboardData();
+  }, [location]);
 
   // Listen for changes to selected meal plan
   useEffect(() => {
