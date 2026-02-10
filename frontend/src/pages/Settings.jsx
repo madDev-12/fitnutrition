@@ -64,13 +64,18 @@ const Settings = () => {
     new_password: '',
     confirm_password: '',
   });
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [savingDob, setSavingDob] = useState(false);
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   useEffect(() => {
     loadPreferences();
-  }, []);
+    if (user?.date_of_birth) {
+      setDateOfBirth(user.date_of_birth);
+    }
+  }, [user]);
 
   const loadPreferences = async () => {
     try {
@@ -212,6 +217,32 @@ const Settings = () => {
       });
     }
     onClose();
+  };
+
+  const handleSaveDateOfBirth = async () => {
+    setSavingDob(true);
+    try {
+      await usersService.updateProfile({ date_of_birth: dateOfBirth });
+      toast({
+        title: '生年月日を保存しました',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      // Refresh user data
+      const updatedUser = await usersService.getCurrentUser();
+      useAuthStore.setState({ user: updatedUser });
+    } catch (error) {
+      toast({
+        title: '保存エラー',
+        description: error.response?.data?.detail || '生年月日の保存に失敗しました',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setSavingDob(false);
+    }
   };
 
   if (loading) {
@@ -375,16 +406,23 @@ const Settings = () => {
 
                     <FormControl>
                       <FormLabel>生年月日</FormLabel>
-                      <Input
-                        type="date"
-                        value={user?.date_of_birth || ''}
-                        isReadOnly
-                        bg={useColorModeValue('gray.50', 'gray.700')}
-                        cursor="not-allowed"
-                        _focus={{ outline: 'none', boxShadow: 'none' }}
-                      />
-                      <Text fontSize="sm" color="gray.500" mt={1}>
-                        生年月日は変更できません
+                      <HStack spacing={2}>
+                        <Input
+                          type="date"
+                          value={dateOfBirth}
+                          onChange={(e) => setDateOfBirth(e.target.value)}
+                        />
+                        <Button
+                          colorScheme="brand"
+                          onClick={handleSaveDateOfBirth}
+                          isLoading={savingDob}
+                          size="md"
+                        >
+                          保存
+                        </Button>
+                      </HStack>
+                      <Text fontSize="sm" color="orange.500" mt={1}>
+                        ⚠️ 一時的に編集可能です（メンテナンス用）
                       </Text>
                     </FormControl>
                   </VStack>
