@@ -62,15 +62,53 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         
         # Generate username from email if not provided
         if not attrs.get('username'):
+            import uuid
+            from datetime import datetime
+            
             email = attrs.get('email', '')
-            username = email.split('@')[0]
-            # Ensure username is unique
-            base_username = username
+            base_username = email.split('@')[0]
+            
+            # Clean username: remove special characters, keep only alphanumeric and underscore
+            base_username = ''.join(c if c.isalnum() or c == '_' else '_' for c in base_username)
+            
+            # Ensure username is unique by adding timestamp and random suffix
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            random_suffix = str(uuid.uuid4())[:8]
+            
+            # Try base username first
+            username = base_username
             counter = 1
-            while User.objects.filter(username=username).exists():
-                username = f"{base_username}{counter}"
+            max_attempts = 100
+            
+            while counter < max_attempts:
+                if not User.objects.filter(username=username).exists():
+                    break
+                
+                # If base username exists, try with counter
+                if counter == 1:
+                    username = f"{base_username}{counter}"
+                elif counter < 10:
+                    username = f"{base_username}{counter}"
+                else:
+                    # After 10 attempts, use timestamp + random suffix for guaranteed uniqueness
+                    username = f"{base_username}_{timestamp}_{random_suffix}"
+                    break
+                
                 counter += 1
+            
             attrs['username'] = username
+        else:
+            # If username is provided, check if it already exists
+            if User.objects.filter(username=attrs['username']).exists():
+                raise serializers.ValidationError(
+                    {"username": "このユーザー名は既に使用されています。"}
+                )
+        
+        # Check if email already exists
+        if User.objects.filter(email=attrs.get('email')).exists():
+            raise serializers.ValidationError(
+                {"email": "このメールアドレスは既に登録されています。"}
+            )
         
         return attrs
     

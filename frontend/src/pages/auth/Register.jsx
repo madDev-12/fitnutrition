@@ -120,12 +120,8 @@ const Register = () => {
       // Normalize payload to backend-expected field values
       const payload = { ...formData };
 
-      // Ensure username exists (backend also derives it, but include to be explicit)
-      if (!payload.username && payload.email) {
-        payload.username = payload.email.split('@')[0];
-      }
-
-      // (No mapping needed: constants now match backend choices)
+      // Remove username field - let backend generate it from email
+      delete payload.username;
 
       // Convert numeric strings to numbers and remove empty values so backend doesn't try to create an incomplete profile
       if (payload.height === '') delete payload.height;
@@ -151,16 +147,30 @@ const Register = () => {
       
       if (error.response?.data) {
         const data = error.response.data;
+        
+        // Handle field-specific errors
         if (data.email) {
           errorMessage = Array.isArray(data.email) ? data.email[0] : data.email;
         } else if (data.username) {
           errorMessage = Array.isArray(data.username) ? data.username[0] : data.username;
         } else if (data.password) {
           errorMessage = Array.isArray(data.password) ? data.password[0] : data.password;
+        } else if (data.password2) {
+          errorMessage = Array.isArray(data.password2) ? data.password2[0] : data.password2;
         } else if (data.detail) {
           errorMessage = data.detail;
         } else if (data.error) {
           errorMessage = data.error;
+        } else if (data.non_field_errors) {
+          errorMessage = Array.isArray(data.non_field_errors) 
+            ? data.non_field_errors[0] 
+            : data.non_field_errors;
+        } else {
+          // Try to extract any error message from the response
+          const firstError = Object.values(data)[0];
+          if (firstError) {
+            errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+          }
         }
       }
       
