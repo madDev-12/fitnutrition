@@ -1,56 +1,47 @@
-"""
-Management command to create superuser automatically
-Usage: python manage.py create_superuser_auto
-"""
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
+from datetime import date
 import os
+import traceback
 
 User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Create a superuser automatically using environment variables'
+    help = 'Create a superuser automatically'
 
     def handle(self, *args, **options):
-        # Get credentials from environment variables or use defaults
         username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
         email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@fitnutrition.com')
         password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'admin123456')
         
-        # Check if superuser already exists
-        if User.objects.filter(username=username).exists():
-            self.stdout.write(
-                self.style.WARNING(f'Superuser "{username}" already exists.')
-            )
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            if user.is_superuser:
+                self.stdout.write(self.style.SUCCESS(f'Superuser {email} already exists'))
+            else:
+                self.stdout.write(self.style.WARNING(f'User {email} exists but not superuser'))
             return
         
-        # Create superuser
+        if User.objects.filter(username=username).exists():
+            self.stdout.write(self.style.WARNING(f'Username {username} already exists'))
+            return
+        
         try:
-            from datetime import date
-            superuser = User.objects.create_superuser(
+            User.objects.create_superuser(
                 username=username,
                 email=email,
                 password=password,
                 first_name='Admin',
                 last_name='User',
-                date_of_birth=date(1990, 1, 1)  # Default date of birth
+                date_of_birth=date(1990, 1, 1)
             )
             
-            self.stdout.write(
-                self.style.SUCCESS(f'Superuser "{username}" created successfully!')
-            )
-            self.stdout.write(
-                self.style.SUCCESS(f'Email: {email}')
-            )
-            self.stdout.write(
-                self.style.SUCCESS('Password: (set via environment variable or default)')
-            )
-            self.stdout.write(
-                self.style.WARNING('Please change the password after first login!')
-            )
+            self.stdout.write(self.style.SUCCESS('Superuser created successfully!'))
+            self.stdout.write(self.style.SUCCESS(f'Email: {email}'))
+            self.stdout.write(self.style.WARNING('Please change password after first login'))
+            self.stdout.write(self.style.WARNING('Login at: /admin/'))
             
         except Exception as e:
-            self.stdout.write(
-                self.style.ERROR(f'Error creating superuser: {str(e)}')
-            )
+            self.stdout.write(self.style.ERROR(f'Error: {str(e)}'))
+            self.stdout.write(self.style.ERROR(traceback.format_exc()))
