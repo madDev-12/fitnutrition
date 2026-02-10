@@ -53,6 +53,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             'first_name', 'last_name', 'phone', 'date_of_birth',
             'gender', 'height', 'weight', 'activity_level', 'fitness_goal'
         ]
+        extra_kwargs = {
+            'username': {'required': False},
+            'first_name': {'required': False},
+            'last_name': {'required': False},
+            'phone': {'required': False},
+            'date_of_birth': {'required': False},
+        }
     
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:

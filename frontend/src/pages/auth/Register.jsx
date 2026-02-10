@@ -144,41 +144,66 @@ const Register = () => {
     } catch (error) {
       // Handle various error formats
       let errorMessage = '登録に失敗しました。もう一度お試しください。';
+      let errorDetails = [];
       
       if (error.response?.data) {
         const data = error.response.data;
         
-        // Handle field-specific errors
-        if (data.email) {
-          errorMessage = Array.isArray(data.email) ? data.email[0] : data.email;
-        } else if (data.username) {
-          errorMessage = Array.isArray(data.username) ? data.username[0] : data.username;
-        } else if (data.password) {
-          errorMessage = Array.isArray(data.password) ? data.password[0] : data.password;
-        } else if (data.password2) {
-          errorMessage = Array.isArray(data.password2) ? data.password2[0] : data.password2;
-        } else if (data.detail) {
-          errorMessage = data.detail;
-        } else if (data.error) {
-          errorMessage = data.error;
-        } else if (data.non_field_errors) {
-          errorMessage = Array.isArray(data.non_field_errors) 
-            ? data.non_field_errors[0] 
-            : data.non_field_errors;
-        } else {
-          // Try to extract any error message from the response
-          const firstError = Object.values(data)[0];
-          if (firstError) {
-            errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+        // Collect all field errors
+        const fieldErrors = {};
+        Object.keys(data).forEach(key => {
+          if (Array.isArray(data[key])) {
+            fieldErrors[key] = data[key][0];
+          } else if (typeof data[key] === 'string') {
+            fieldErrors[key] = data[key];
+          }
+        });
+        
+        // Map field names to Japanese
+        const fieldNameMap = {
+          'email': 'メールアドレス',
+          'username': 'ユーザー名',
+          'password': 'パスワード',
+          'password2': 'パスワード確認',
+          'first_name': '名',
+          'last_name': '姓',
+          'date_of_birth': '生年月日',
+          'gender': '性別',
+          'height': '身長',
+          'weight': '体重',
+          'activity_level': '活動レベル',
+          'fitness_goal': 'フィットネス目標',
+          'non_field_errors': '全般',
+          'detail': '詳細',
+          'error': 'エラー'
+        };
+        
+        // Build error message with field names
+        if (Object.keys(fieldErrors).length > 0) {
+          errorDetails = Object.entries(fieldErrors).map(([field, message]) => {
+            const fieldName = fieldNameMap[field] || field;
+            return `${fieldName}: ${message}`;
+          });
+          
+          // Use the first error as main message
+          errorMessage = errorDetails[0];
+          
+          // If multiple errors, show them all
+          if (errorDetails.length > 1) {
+            errorMessage = errorDetails.join('\n');
           }
         }
+        
+        // Log full error for debugging
+        console.error('Registration error:', data);
+        console.error('Payload sent:', payload);
       }
       
       toast({
         title: '登録失敗',
         description: errorMessage,
         status: 'error',
-        duration: 5000,
+        duration: 7000,
         isClosable: true,
       });
     } finally {
