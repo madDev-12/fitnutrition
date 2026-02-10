@@ -133,9 +133,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         validated_data.pop('password2')
         user = User.objects.create_user(**validated_data)
         
-        # Create user profile if profile data is provided
-        if any(profile_data.values()):
-            UserProfile.objects.create(user=user, **{k: v for k, v in profile_data.items() if v is not None})
+        # Always create user profile (even if all fields are None)
+        # This ensures the profile exists and can be updated later
+        UserProfile.objects.create(
+            user=user,
+            **{k: v for k, v in profile_data.items() if v is not None}
+        )
         
         return user
 

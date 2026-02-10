@@ -13,7 +13,8 @@ from .serializers import (
     UserProfileSerializer, 
     UserRegistrationSerializer,
     FoodPreferenceSerializer,
-    UserPreferencesSerializer
+    UserPreferencesSerializer,
+    UserDetailSerializer
 )
 from .models import UserProfile, FoodPreference, UserPreferences
 
@@ -181,8 +182,14 @@ class UserLogoutView(generics.GenericAPIView):
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
-    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        # Use UserDetailSerializer for GET requests to include profile and stats
+        if self.request.method == 'GET':
+            return UserDetailSerializer
+        # Use UserSerializer for PATCH/PUT requests
+        return UserSerializer
 
     def get_object(self):
         return self.request.user
@@ -233,15 +240,44 @@ class ChangePasswordView(generics.UpdateAPIView):
         old_password = request.data.get('old_password')
         new_password = request.data.get('new_password')
 
+        if not old_password or not new_password:
+            return Response(
+                {'error': '現在のパスワードと新しいパスワードが必要です'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if not user.check_password(old_password):
             return Response(
-                {'error': 'Old password is incorrect'},
+                {'error': '現在のパスワードが正しくありません'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Validate new password
+        from django.contrib.auth.password_validation import validate_password
+        from django.core.exceptions import ValidationError
+        try:
+            validate_password(new_password, user)
+        except ValidationError as e:
+            return Response(
+                {'error': 'パスワードが要件を満たしていません', 'details': {'new_password': list(e.messages)}},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         user.set_password(new_password)
         user.save()
-        return Response({'message': 'Password updated successfully'})
+        return Response({'message': 'パスワードが正常に更新されました'})
+
+
+class DeleteAccountView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        user.delete()
+        return Response(
+            {'message': 'アカウントが正常に削除されました'},
+            status=status.HTTP_200_OK
+        )
 
 
 @api_view(['GET'])

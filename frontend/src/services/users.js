@@ -79,7 +79,7 @@ const usersService = {
 
   // Delete account
   deleteAccount: async () => {
-    const response = await api.delete('/profile/');
+    const response = await api.delete('/profile/delete/');
     return response.data;
   },
 

@@ -12,6 +12,7 @@ from .views import (
     FoodPreferenceView,
     UserPreferencesView,
     ChangePasswordView,
+    DeleteAccountView,
     get_user_stats,
     upload_profile_picture,
 )
@@ -40,4 +41,7 @@ urlpatterns = [
     
     # Password Management
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+    
+    # Account Management
+    path('delete/', DeleteAccountView.as_view(), name='delete-account'),
 ]
