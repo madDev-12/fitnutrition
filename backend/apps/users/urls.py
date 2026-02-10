@@ -14,7 +14,6 @@ from .views import (
     ChangePasswordView,
     get_user_stats,
     upload_profile_picture,
-    create_superuser_endpoint,
 )
 
 app_name = 'users'
@@ -41,7 +40,4 @@ urlpatterns = [
     
     # Password Management
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
-    
-    # Emergency Superuser Creation
-    path('create-superuser/', create_superuser_endpoint, name='create-superuser'),
 ]

@@ -25,12 +25,4 @@ python manage.py collectstatic --noinput
 echo "Running database migrations..."
 python manage.py migrate
 
-# Create superuser automatically if not exists
-echo "Creating superuser (if not exists)..."
-python manage.py create_superuser_auto
-
-# Make sure admin@fitnutrition.com is superuser with staff privileges
-echo "Ensuring admin user has staff privileges..."
-python manage.py make_user_superuser admin@fitnutrition.com || echo "Admin user setup will be handled by create_superuser_auto"
-
 echo "Build completed successfully!"
