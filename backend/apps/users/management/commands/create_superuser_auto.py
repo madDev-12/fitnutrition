@@ -28,7 +28,7 @@ class Command(BaseCommand):
             return
         
         try:
-            User.objects.create_superuser(
+            user = User.objects.create_superuser(
                 username=username,
                 email=email,
                 password=password,
@@ -37,11 +37,27 @@ class Command(BaseCommand):
                 date_of_birth=date(1990, 1, 1)
             )
             
+            # Explicitly set staff and superuser flags
+            user.is_staff = True
+            user.is_superuser = True
+            user.is_active = True
+            user.save()
+            
+            self.stdout.write(self.style.SUCCESS('=' * 60))
             self.stdout.write(self.style.SUCCESS('Superuser created successfully!'))
+            self.stdout.write(self.style.SUCCESS('=' * 60))
             self.stdout.write(self.style.SUCCESS(f'Email: {email}'))
+            self.stdout.write(self.style.SUCCESS(f'Username: {username}'))
+            self.stdout.write(self.style.SUCCESS(f'is_staff: {user.is_staff}'))
+            self.stdout.write(self.style.SUCCESS(f'is_superuser: {user.is_superuser}'))
+            self.stdout.write(self.style.SUCCESS(f'is_active: {user.is_active}'))
+            self.stdout.write(self.style.SUCCESS('=' * 60))
             self.stdout.write(self.style.WARNING('Please change password after first login'))
             self.stdout.write(self.style.WARNING('Login at: /admin/'))
+            self.stdout.write(self.style.SUCCESS('=' * 60))
             
         except Exception as e:
+            self.stdout.write(self.style.ERROR('=' * 60))
             self.stdout.write(self.style.ERROR(f'Error: {str(e)}'))
+            self.stdout.write(self.style.ERROR('=' * 60))
             self.stdout.write(self.style.ERROR(traceback.format_exc()))
