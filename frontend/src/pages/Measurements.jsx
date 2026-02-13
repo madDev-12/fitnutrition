@@ -50,12 +50,19 @@ import {
   PopoverContent,
   PopoverBody,
   PopoverArrow,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
 } from '@chakra-ui/react';
 import { EditIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, ChevronDownIcon, CalendarIcon } from '@chakra-ui/icons';
-import { FiActivity, FiPercent, FiZap, FiTrendingUp } from 'react-icons/fi';
+import { FiActivity, FiPercent, FiZap, FiTrendingUp, FiAlertCircle } from 'react-icons/fi';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 import measurementsService from '../services/measurements';
 import analyticsService from '../services/analytics';
+import usersService from '../services/users';
 import { formatDate, calculateBMI, calculateBMR, calculateTDEE } from '../utils/helpers';
 import { useAuthStore } from '../store/authStore';
 
@@ -64,9 +71,11 @@ const Measurements = () => {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const cancelRef = useRef();
   const toast = useToast();
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const [measurements, setMeasurements] = useState([]);
   const [dashboardData, setDashboardData] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -75,6 +84,7 @@ const Measurements = () => {
   const [chartPointsToShow] = useState(7); // Show 7 days at a time
   const [tableStartIndex, setTableStartIndex] = useState(0);
   const [tableItemsToShow] = useState(7); // Show 7 items at a time in table
+  const [showHeightAlert, setShowHeightAlert] = useState(false);
   const [formData, setFormData] = useState({
     date: '',
     weight: '',
@@ -103,6 +113,7 @@ const Measurements = () => {
   useEffect(() => {
     loadMeasurements();
     loadDashboardData();
+    loadUserProfile();
   }, []);
 
   // Update placeholders whenever measurements change
@@ -186,6 +197,24 @@ const Measurements = () => {
     } catch (error) {
       console.error('Error loading dashboard data:', error);
       setDashboardData(null);
+    }
+  };
+
+  const loadUserProfile = async () => {
+    try {
+      const profileResponse = await usersService.getCurrentUser();
+      const profileData = profileResponse.data || profileResponse;
+      console.log('User profile data for Measurements:', profileData);
+      setUserProfile(profileData);
+      
+      // Check if height is missing and show alert
+      if (!profileData?.profile?.height) {
+        setShowHeightAlert(true);
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      setUserProfile(null);
+      setShowHeightAlert(true);
     }
   };
 
@@ -360,8 +389,16 @@ const Measurements = () => {
   };
 
   const latestMeasurement = measurements[0];
-  const userHeight = user?.profile?.height;
+  // Use height from freshly loaded user profile, not from authStore
+  const userHeight = userProfile?.profile?.height;
   const bmi = (latestMeasurement && userHeight) ? parseFloat(calculateBMI(latestMeasurement.weight, userHeight)) : null;
+  
+  console.log('BMI Calculation Debug:', {
+    latestMeasurement: latestMeasurement,
+    userHeight: userHeight,
+    userProfile: userProfile,
+    bmi: bmi
+  });
   
   // Calculate age from date_of_birth
   const calculateAge = (dob) => {
@@ -656,6 +693,41 @@ const Measurements = () => {
         </Button>
       </Box>
 
+      {/* Height Missing Alert */}
+      {showHeightAlert && !userHeight && (
+        <Alert 
+          status="warning" 
+          mb={6} 
+          borderRadius="lg"
+          variant="left-accent"
+        >
+          <AlertIcon as={FiAlertCircle} />
+          <Box flex="1">
+            <AlertTitle fontSize="md" mb={1}>身長が設定されていません</AlertTitle>
+            <AlertDescription fontSize="sm">
+              BMIや基礎代謝量を計算するには、プロフィールで身長を設定してください。
+            </AlertDescription>
+          </Box>
+          <HStack spacing={2}>
+            <Button 
+              size="sm" 
+              colorScheme="orange" 
+              onClick={() => navigate('/profile')}
+              leftIcon={<Icon as={FiActivity} />}
+            >
+              プロフィールを設定
+            </Button>
+            <CloseButton 
+              alignSelf="flex-start" 
+              position="relative"
+              right={-1}
+              top={-1}
+              onClick={() => setShowHeightAlert(false)}
+            />
+          </HStack>
+        </Alert>
+      )}
+
       {/* Stats Cards */}
       {latestMeasurement && (
         <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={{ base: 3, md: 4, lg: 6 }} mb={{ base: 4, md: 6, lg: 8 }}>
@@ -705,12 +777,25 @@ const Measurements = () => {
               <Flex justify="space-between" align="flex-start">
                 <Box flex="1">
                   <Text fontSize="xs" color="gray.600" mb={2}>BMI</Text>
-                  <Text fontSize="2xl" fontWeight="bold" mb={1}>
-                    {bmi ? bmi.toFixed(1) : '-'}
-                  </Text>
-                  <Badge colorScheme={bmi < 18.5 ? 'yellow' : bmi < 25 ? 'green' : bmi < 30 ? 'orange' : 'red'}>
-                    {bmi < 18.5 ? '低体重' : bmi < 25 ? '標準' : bmi < 30 ? '過体重' : '肥満'}
-                  </Badge>
+                  {bmi ? (
+                    <>
+                      <Text fontSize="2xl" fontWeight="bold" mb={1}>
+                        {bmi.toFixed(1)}
+                      </Text>
+                      <Badge colorScheme={bmi < 18.5 ? 'yellow' : bmi < 25 ? 'green' : bmi < 30 ? 'orange' : 'red'}>
+                        {bmi < 18.5 ? '低体重' : bmi < 25 ? '標準' : bmi < 30 ? '過体重' : '肥満'}
+                      </Badge>
+                    </>
+                  ) : (
+                    <>
+                      <Text fontSize="2xl" fontWeight="bold" mb={1} color="gray.400">
+                        -
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {!userHeight ? '身長を設定してください' : '測定値を追加してください'}
+                      </Text>
+                    </>
+                  )}
                 </Box>
                 <Box
                   bg="green.100"
@@ -737,12 +822,25 @@ const Measurements = () => {
               <Flex justify="space-between" align="flex-start">
                 <Box flex="1">
                   <Text fontSize="xs" color="gray.600" mb={2}>基礎代謝量</Text>
-                  <Text fontSize="2xl" fontWeight="bold" mb={1}>
-                    {bmr ? Math.round(bmr) : '-'}
-                  </Text>
-                  <Text fontSize="xs" color="gray.500">
-                    BMR (kcal)
-                  </Text>
+                  {bmr ? (
+                    <>
+                      <Text fontSize="2xl" fontWeight="bold" mb={1}>
+                        {Math.round(bmr)}
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        BMR (kcal)
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text fontSize="2xl" fontWeight="bold" mb={1} color="gray.400">
+                        -
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {!userHeight ? '身長を設定してください' : '測定値を追加してください'}
+                      </Text>
+                    </>
+                  )}
                 </Box>
                 <Box
                   bg="purple.100"
@@ -769,12 +867,25 @@ const Measurements = () => {
               <Flex justify="space-between" align="flex-start">
                 <Box flex="1">
                   <Text fontSize="xs" color="gray.600" mb={2}>1日の消費カロリー</Text>
-                  <Text fontSize="2xl" fontWeight="bold" mb={1}>
-                    {tdee ? Math.round(tdee) : '-'}
-                  </Text>
-                  <Text fontSize="xs" color="gray.500">
-                    TDEE (kcal)
-                  </Text>
+                  {tdee ? (
+                    <>
+                      <Text fontSize="2xl" fontWeight="bold" mb={1}>
+                        {Math.round(tdee)}
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        TDEE (kcal)
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text fontSize="2xl" fontWeight="bold" mb={1} color="gray.400">
+                        -
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {!userHeight ? '身長を設定してください' : '測定値を追加してください'}
+                      </Text>
+                    </>
+                  )}
                 </Box>
                 <Box
                   bg="orange.100"
