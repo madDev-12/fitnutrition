@@ -324,8 +324,12 @@ def upload_profile_picture(request):
             user.profile_picture = request.FILES['profile_picture']
             user.save()
             
+            # Return complete user data so frontend can update authStore
+            serializer = UserSerializer(user)
+            
             return Response({
                 'message': 'Profile picture uploaded successfully',
+                'user': serializer.data,
                 'profile_picture_url': user.profile_picture.url if user.profile_picture else None
             })
         else:

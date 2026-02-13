@@ -131,11 +131,17 @@ const Profile = () => {
     setSubmitting(true);
 
     try {
-      let uploadResponse = null;
+      let updatedUserData = null;
       
       // Upload profile picture first if selected
       if (selectedProfilePicture) {
-        uploadResponse = await usersService.uploadProfilePicture(selectedProfilePicture);
+        const uploadResponse = await usersService.uploadProfilePicture(selectedProfilePicture);
+        
+        // Update authStore with new user data including profile picture
+        if (uploadResponse && uploadResponse.user) {
+          updatedUserData = uploadResponse.user;
+          updateUser(updatedUserData);
+        }
       }
 
       // Separate user data and profile data
@@ -154,14 +160,14 @@ const Profile = () => {
       };
 
       // Update user basic info
-      await usersService.updateProfile(userData);
+      const userUpdateResponse = await usersService.updateProfile(userData);
       
       // Update profile details
       await usersService.updateProfileDetails(profileData);
 
-      // Update user in authStore with new profile picture if uploaded
-      if (uploadResponse && uploadResponse.user) {
-        updateUser(uploadResponse.user);
+      // Update authStore with latest user data (in case profile picture wasn't uploaded)
+      if (!updatedUserData && userUpdateResponse) {
+        updateUser(userUpdateResponse);
       }
 
       // Reset unsaved changes flag
@@ -176,7 +182,9 @@ const Profile = () => {
         duration: 3000,
         isClosable: true,
       });
-      loadProfile();
+      
+      // Reload profile to ensure everything is in sync
+      await loadProfile();
     } catch (error) {
       console.error('Profile update error:', error);
       toast({
